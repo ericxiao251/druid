@@ -280,8 +280,8 @@ public class CalciteQueryTest extends BaseCalciteQueryTest
               .build()
         ),
         ImmutableList.of(
-            // new Object[]{timestamp("1970-01-01")}
-            new Object[]{0L}
+            // new Object[]{NullHandling.replaceWithDefault() ? timestamp("1970-01-01") : null}
+            new Object[]{NullHandling.replaceWithDefault() ? 0L : null}
         )
     );
   }
