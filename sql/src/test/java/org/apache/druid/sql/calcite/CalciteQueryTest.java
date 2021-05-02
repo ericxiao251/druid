@@ -261,19 +261,27 @@ public class CalciteQueryTest extends BaseCalciteQueryTest
   public void testSelectAggregateValueFromTableWithUseDefaultValueForNullTrue() throws Exception
   {
     testQuery(
-        "SELECT MAX(__time) FROM druid.foo",
-        // "SELECT MAX(t) FILTER(WHERE dim1 = 'non_existing') FROM foo",
+        // "SELECT MAX(__time) FROM druid.foo",
+        "SELECT MAX(l1) FILTER(WHERE dim1 = 'non_existing') FROM numfoo",
         ImmutableList.of(
         Druids.newTimeseriesQueryBuilder()
-              .dataSource(CalciteTests.DATASOURCE1)
+              // .dataSource(CalciteTests.DATASOURCE1)
+              .dataSource(CalciteTests.DATASOURCE3)
               .intervals(querySegmentSpec(Filtration.eternity()))
               .granularity(Granularities.ALL)
-              .aggregators(aggregators(new LongMaxAggregatorFactory("a0", "__time")))
+              // .aggregators(aggregators(new LongMaxAggregatorFactory("a0", "__time")))
+              .aggregators(
+                  new FilteredAggregatorFactory(
+                      new LongMaxAggregatorFactory("a0", "l1"),
+                      selector("dim1", "non_existing", null)
+                  )
+              )
               .context(TIMESERIES_CONTEXT_DEFAULT)
               .build()
         ),
         ImmutableList.of(
-            new Object[]{timestamp("2001-01-03")}
+            // new Object[]{timestamp("1970-01-01")}
+            new Object[]{0L}
         )
     );
   }
